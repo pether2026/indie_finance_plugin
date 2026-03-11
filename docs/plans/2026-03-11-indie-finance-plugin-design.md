@@ -3,7 +3,7 @@
 > 独立投资者金融分析插件 — 基于 Anthropic financial-services-plugins 架构，替换为免费数据源，新增 Crypto 模块
 >
 > 设计日期：2026-03-11
-> 状态：Phase 1-2 已完成，Phase 3 进行中
+> 状态：Phase 1-3 已完成，Phase 4-5 待实施
 > 架构变更：已从单插件改为多插件 marketplace（2026-03-11 决定）
 
 ---
@@ -74,7 +74,7 @@ indie-finance-plugin/
 │   │   └── model-update/SKILL.md
 │   └── _reference/               # 保留但不激活的官方 skill（13 个）
 │
-├── crypto/                       # 子插件 2: 加密市场 [Phase 3 待实施]
+├── crypto/                       # 子插件 2: 加密市场 [Phase 3 ✅]
 │   ├── .claude-plugin/plugin.json
 │   ├── .mcp.json                 # coingecko, defillama, dune
 │   ├── hooks/hooks.json
@@ -435,13 +435,14 @@ Phase 2: TradFi 模块 ✅ 完成
   ├── 所有 Office JS 引用移除，仅保留 Python/openpyxl
   └── 填充 _reference/ 目录（13 个 inactive skills）
 
-Phase 3: Crypto 模块（待实施）
-  ├── 新建 token-analysis skill
-  ├── 新建 defi-protocol skill
-  ├── 新建 airdrop-eval skill（集成六维度框架）
-  ├── 新建 onchain-query skill
-  ├── 编写 /token, /defi, /airdrop, /onchain 命令
-  └── airdrop skill 对齐现有 P-xxx 模板格式
+Phase 3: Crypto 模块 ✅
+  ├── 升级 Dune MCP 为官方版（11 tools, HTTP remote）
+  ├── 新建 token-analysis skill（coingecko 数据）
+  ├── 新建 defi-protocol skill（defillama + coingecko 数据）
+  ├── 新建 airdrop-eval skill（六维度框架 + scoring-framework.md）
+  ├── 新建 onchain-query skill（Dune SQL + preset-queries.md）
+  ├── 编写 /crypto:token, /crypto:defi, /crypto:airdrop, /crypto:onchain 命令
+  └── airdrop skill 对齐 P-xxx 模板格式（Sprint/中等维护/低保维护档位）
 
 Phase 4: Macro 模块（待实施）
   ├── 新建 macro-dashboard skill
