@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "coingecko": {
+      "type": "http",
+      "command": "npx",
+      "args": ["@coingecko/coingecko-mcp"]
+    },
+    "defillama": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@iqai/mcp-defillama"]
+    },
+    "dune": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["dune-analytics-mcp"],
+      "env": { "DUNE_API_KEY": "${DUNE_API_KEY}" }
+    }
+  }
+}
