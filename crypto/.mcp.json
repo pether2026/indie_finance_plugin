@@ -8,7 +8,7 @@
     "defillama": {
       "type": "stdio",
       "command": "npx",
-      "args": ["@iqai/mcp-defillama"]
+      "args": ["@iqai/defillama-mcp"]
     },
     "dune": {
       "type": "http",

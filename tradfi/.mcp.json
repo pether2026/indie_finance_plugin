@@ -3,7 +3,7 @@
     "yahoo-finance": {
       "type": "stdio",
       "command": "uvx",
-      "args": ["yahoo-finance-mcp"]
+      "args": ["mcp-yahoo-finance"]
     },
     "alpha-vantage": {
       "type": "http",
