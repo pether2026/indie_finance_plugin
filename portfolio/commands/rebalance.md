@@ -51,7 +51,7 @@ Always annotate: "Source: [source name]" on each data point.
 
 ## Output
 
-- **Primary**: `Portfolio_Rebalance_{YYYYMMDD}.md`
+- **Primary**: `YYYYMMDD-rebalance.md`
 - **Optional**: Excel 输出（持仓多时）
 
 ## Quality Checklist

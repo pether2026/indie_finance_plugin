@@ -61,7 +61,7 @@ allowed-tools: mcp__dune__*, WebSearch, WebFetch
 ## Output
 
 - **Primary**: Markdown 表格（对话中显示）
-- **Optional**: `Onchain_{Description}_{YYYYMMDD}.md`
+- **Optional**: `YYYYMMDD-onchain-{Description}.md`
 - 包含 SQL 代码块
 - 标注 Dune credit 消耗
 

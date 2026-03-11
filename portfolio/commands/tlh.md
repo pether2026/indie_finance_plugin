@@ -59,7 +59,7 @@ allowed-tools: Bash(python3:*), Bash(pip:*), mcp__yahoo-finance__*, WebSearch, W
 
 ## Output
 
-- **Primary**: `TLH_Analysis_{YYYYMMDD}.md`
+- **Primary**: `YYYYMMDD-tlh.md`
 - **Optional**: Excel 含盈亏明细
 - 免责声明：不构成税务建议
 

@@ -109,7 +109,7 @@ For **model** scope, prepend a summary:
 
 ## Output
 
-- **Primary**: Audit findings table (in conversation or as `{Model}_Audit_{YYYYMMDD}.md`)
+- **Primary**: Audit findings table (in conversation or as `YYYYMMDD-audit-{Model}.md`)
 - Prioritized by severity: Critical first, then Warning, then Info
 - Each issue includes suggested fix
 
