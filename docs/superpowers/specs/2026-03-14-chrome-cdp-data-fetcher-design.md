@@ -45,22 +45,37 @@ indie_finance_plugin/
 
 Chrome CDP fetches data locally using the user's own browser. There is no external service process to bridge. MCP adds unnecessary protocol overhead for a local operation. This matches the pattern proven by baoyu-skills (`baoyu-url-to-markdown`).
 
+### Phantom MCP Problem
+
+Many SKILL.md files reference MCP servers that do not exist in their `.mcp.json` configurations:
+
+| Phantom MCP | Referenced by | Actual .mcp.json |
+|-------------|--------------|------------------|
+| yahoo-finance | tradfi: comps, earnings | tradfi: alpha-vantage only |
+| financial-modeling-prep | tradfi: comps, earnings | tradfi: alpha-vantage only |
+| defillama | crypto: defi-protocol, airdrop-eval; macro: dashboard, morning, catalyst | crypto: coingecko + dune only; macro: coingecko only |
+| fred | macro: dashboard, morning, catalyst | macro: coingecko only |
+
+Portfolio sub-plugin has `"mcpServers": {}` — zero functional MCP at all, despite SKILL.md referencing yahoo-finance.
+
+This means chrome-cdp is not merely a Layer 2 replacement — for skills with phantom MCP references, it becomes the **de facto primary data source**.
+
 ### Fallback Strategy Change
 
-Before (3 layers):
+Two distinct scenarios after chrome-cdp:
+
+**Scenario A: Skills with working MCP** (e.g., token-analysis with CoinGecko, onchain-query with Dune):
 ```
-Layer 1: MCP (alpha-vantage, coingecko, dune)
-Layer 2: WebSearch (search engine results)
-Layer 3: Chrome CDP (undefined, never implemented)
+Layer 1: MCP (working) — unchanged
+Layer 2: chrome-cdp (fallback for supplementary data)
 ```
 
-After (2 layers):
+**Scenario B: Skills with phantom MCP** (e.g., comps with yahoo-finance, defi-protocol with defillama):
 ```
-Layer 1: MCP (alpha-vantage, coingecko, dune) — unchanged
-Layer 2: chrome-cdp (direct page access, rendered Markdown)
+Layer 1: chrome-cdp (effective primary data source)
 ```
 
-Layer 2 and Layer 3 merge because chrome-cdp already provides direct page access with full rendering.
+Layer 2 (WebSearch) and Layer 3 (Chrome CDP) merge because chrome-cdp already provides direct page access with full rendering.
 
 ## Package Design: `packages/chrome-cdp/`
 
@@ -84,16 +99,35 @@ Public API:
 async function fetchAsMarkdown(url: string): Promise<string>
 ```
 
-Internal flow:
+Session-based lifecycle (launch once, fetch N URLs, then close):
+
+```typescript
+async function createSession(): Promise<Session>
+async function fetchAsMarkdown(session: Session, url: string): Promise<string>
+async function closeSession(session: Session): Promise<void>
+```
+
+Internal flow for `fetchAsMarkdown`:
 1. Check cache -> hit: return cached Markdown
-2. Find local Chrome binary (macOS/Linux/Windows paths)
-3. Launch Chrome with `--headless --remote-debugging-port`
-4. Connect via WebSocket CDP
-5. Navigate to URL, wait for page load (networkIdle)
-6. Extract `document.body` innerHTML
-7. Convert HTML to Markdown via Defuddle
-8. Write to cache
-9. Close Chrome, return Markdown
+2. Navigate to URL, wait for page load (networkIdle)
+3. Extract `document.body` innerHTML
+4. Convert HTML to Markdown via Defuddle
+5. Write to cache, return Markdown
+
+Session lifecycle (`createSession` / `closeSession`):
+1. Find local Chrome binary (macOS/Linux/Windows paths)
+2. Launch Chrome with `--headless --remote-debugging-port={random}`
+3. Connect via WebSocket CDP
+4. (... N fetches ...)
+5. Close Chrome, cleanup WebSocket
+
+This avoids launching/closing Chrome per URL. A morning note fetching 5-10 URLs reuses one Chrome instance.
+
+CLI usage (single URL convenience):
+```bash
+bun packages/chrome-cdp/index.ts 'https://finance.yahoo.com/quote/AAPL/financials'
+# internally: createSession -> fetchAsMarkdown -> closeSession
+```
 
 ### cache.ts (~80 lines)
 
@@ -103,7 +137,8 @@ Internal flow:
       └── finance.yahoo.com_quote_AAPL_financials.md
 ```
 
-- Cache key: URL path converted to filename (`/` -> `_`)
+- Cache key: SHA-256 hash of full URL (avoids filename length limits and query param collisions)
+- Metadata: each cache entry has a `.meta` file with original URL for debugging
 - Expiry: by date directory, valid for current day only
 - Cleanup: keep last 7 days, auto-delete older directories
 - Location: reuses existing `~/.indie-finance/` directory (alongside `keys.json`)
@@ -143,16 +178,15 @@ The chrome-cdp package is URL-agnostic. Each SKILL.md decides which URL to fetch
 
 ### Impact Scope
 
-| Sub-plugin | Skills affected | URLs replaced |
-|------------|----------------|---------------|
-| tradfi | comps, dcf, earnings, thesis | finance.yahoo.com, macrotrends.net |
-| portfolio | rebalance, tlh | finance.yahoo.com |
-| macro | dashboard, morning | fred.stlouisfed.org |
-| crypto | defi-protocol, airdrop-eval, token-analysis | defillama.com, project official sites |
+| Sub-plugin | Skills affected | Scenario | URLs |
+|------------|----------------|----------|------|
+| tradfi | comps, dcf, earnings, thesis, model-update | B (phantom MCP) | finance.yahoo.com, macrotrends.net |
+| portfolio | rebalance, tlh | B (phantom MCP, empty .mcp.json) | finance.yahoo.com |
+| macro | dashboard, morning, catalyst | B (phantom MCP for defillama/fred) | fred.stlouisfed.org, defillama.com |
+| crypto | defi-protocol, airdrop-eval | B (phantom defillama MCP) | defillama.com, project official sites |
+| crypto | token-analysis | A (CoinGecko works, supplementary only) | unlock schedule sites, audit reports |
 
-Note: crypto/onchain-query is unaffected (Dune MCP covers it fully).
-
-Note: crypto/defi-protocol SKILL.md references "defillama MCP" as Layer 1, but DefiLlama has no official MCP. This data currently falls back to WebSearch. chrome-cdp will properly serve this use case by directly accessing defillama.com.
+Unaffected: crypto/onchain-query (Dune MCP covers it fully).
 
 ## Error Handling
 
@@ -183,3 +217,12 @@ Financial data updates at most daily for the analyses this project performs (fun
 
 ### Why fork baoyu-chrome-cdp instead of depending on it?
 The user requires full control with no external dependency. Forking ~200 lines (after trimming) is trivially maintainable and eliminates version coupling.
+
+### Legal note on programmatic page access
+Unlike yfinance (a scraper library that bulk-fetches Yahoo endpoints), chrome-cdp opens pages in a real browser the same way a human user would — single pages, read-only, user-initiated. Combined with daily caching (max 1 request/URL/day), this is materially different from automated scraping. The distinction should be documented but is not a blocker.
+
+## Setup Notes
+
+- `packages/` directory does not exist yet — must be created
+- Defuddle should be pinned to a specific version in package.json
+- Bun runtime is already used by the project (baoyu-skills pattern)
