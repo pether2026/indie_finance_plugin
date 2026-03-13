@@ -8,10 +8,10 @@
 
 | 子插件 | 命令 | 数据源 |
 |--------|------|--------|
-| `tradfi` | `/comps` `/dcf` `/earnings` `/screen` `/thesis` `/model-update` `/debug-model` | Yahoo Finance, Alpha Vantage |
-| `crypto` | `/token` `/defi` `/airdrop` `/onchain` | CoinGecko, DefiLlama, Dune |
-| `macro` | `/dashboard` `/morning` `/catalyst` | FRED, DefiLlama, CoinGecko |
-| `portfolio` | `/rebalance` `/tlh` | Yahoo Finance |
+| `tradfi` | `/comps` `/dcf` `/earnings` `/screen` `/thesis` `/model-update` `/debug-model` | Alpha Vantage (MCP) + Yahoo Finance (Web Search) |
+| `crypto` | `/token` `/defi` `/airdrop` `/onchain` | CoinGecko, Dune (MCP) + DefiLlama (Web Search) |
+| `macro` | `/dashboard` `/morning` `/catalyst` | CoinGecko (MCP) + FRED, DefiLlama (Web Search) |
+| `portfolio` | `/rebalance` `/tlh` | Yahoo Finance (Web Search) |
 
 另有自动触发 skill（无独立命令）：`news-digest`（新闻补充）、`competitive-analysis`（竞争分析）、`audit-xls`（电子表格审计）、`idea-generation`（投资想法筛选）。
 
@@ -39,16 +39,16 @@ Layer 3: Chrome CDP 直接访问（Web Search 也不可用时）
 
 | 场景 | Layer 1 (MCP) | Layer 2 (Web Search) | Layer 3 (Chrome) |
 |------|--------------|---------------------|------------------|
-| 股票行情/财报 | yahoo-finance | finance.yahoo.com | 同左 |
+| 股票行情/财报 | — | finance.yahoo.com | 同左 |
 | 技术指标 | alpha-vantage | tradingview.com | TradingView 页面 |
 | SEC Filing | — | sec.gov/edgar | EDGAR 全文 |
 | 电话会议 | alpha-vantage | seekingalpha.com/transcripts | Seeking Alpha |
 | 分析师预期 | — | tipranks.com, wsj.com | TipRanks 页面 |
 | 加密行情 | coingecko | coingecko.com | 同左 |
-| DeFi 数据 | defillama | defillama.com | 同左 |
+| DeFi 数据 | — | defillama.com | 同左 |
 | 链上数据 | dune | dune.com/queries | Dune 查询页面 |
-| 宏观经济 | fred | fred.stlouisfed.org | 同左 |
-| 新闻 | yahoo-finance / alpha-vantage | google news search | 具体新闻站点 |
+| 宏观经济 | — | fred.stlouisfed.org | 同左 |
+| 新闻 | alpha-vantage | google news search | 具体新闻站点 |
 
 ## 输出格式规则
 
@@ -79,10 +79,10 @@ Layer 3: Chrome CDP 直接访问（Web Search 也不可用时）
 
 | 数据源 | 限制 | 注意事项 |
 |--------|------|---------|
-| Yahoo Finance | 无官方限制 | TradFi 首选数据源 |
-| CoinGecko (Demo) | 30次/分, 10000次/月 | Crypto 首选数据源 |
-| DefiLlama | 无限制 | DeFi 首选数据源 |
-| Alpha Vantage | 25次/天, 5次/分 | 仅用于电话会议和技术指标 |
-| FMP | 250次/天 | 暂无 MCP server，通过 Web Search fallback |
-| FRED | 120次/分 | 宏观数据充裕 |
-| Dune | 15+40次/分 | 链上查询 |
+| CoinGecko (Demo) | 30次/分, 10000次/月 | 官方 MCP，Crypto 首选 |
+| Alpha Vantage | 25次/天, 5次/分 | 官方 MCP，仅用于电话会议和技术指标 |
+| Dune | 15+40次/分 | 官方 MCP，链上查询 |
+| Yahoo Finance | 无官方限制 | 无官方 MCP，Web Search fallback |
+| DefiLlama | 无限制 | 无官方 MCP，Web Search fallback |
+| FRED | 120次/分 | 无官方 MCP，Web Search fallback |
+| FMP | 250次/天 | 无官方 MCP，Web Search fallback |

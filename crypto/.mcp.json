@@ -5,11 +5,6 @@
       "command": "npx",
       "args": ["@coingecko/coingecko-mcp"]
     },
-    "defillama": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["@iqai/defillama-mcp"]
-    },
     "dune": {
       "type": "http",
       "url": "https://api.dune.com/mcp/v1",

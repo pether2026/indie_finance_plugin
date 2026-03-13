@@ -1,9 +1,3 @@
 {
-  "mcpServers": {
-    "yahoo-finance": {
-      "type": "stdio",
-      "command": "uvx",
-      "args": ["mcp-yahoo-finance"]
-    }
-  }
+  "mcpServers": {}
 }

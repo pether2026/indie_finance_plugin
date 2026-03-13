@@ -1,10 +1,5 @@
 {
   "mcpServers": {
-    "yahoo-finance": {
-      "type": "stdio",
-      "command": "uvx",
-      "args": ["mcp-yahoo-finance"]
-    },
     "alpha-vantage": {
       "type": "http",
       "url": "https://mcp.alphavantage.co",
