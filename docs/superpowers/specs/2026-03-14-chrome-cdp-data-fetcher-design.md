@@ -157,7 +157,10 @@ Defuddle is chosen over lightweight regex because:
 |------------|------|---------|----------|
 | Bun | Runtime | Execute TypeScript | Official, project already uses it |
 | Defuddle | npm package | HTML to Markdown | Open-source, active maintenance |
+| jsdom | npm package | Server-side DOM for Defuddle | Mozilla/OpenJS Foundation, industry standard |
 | Chrome | System binary | Page rendering | User's own installed browser |
+
+Defuddle's `defuddle/node` entry point requires the caller to provide a JSDOM instance. jsdom is not bundled as a Defuddle dependency — it is provided externally so Defuddle stays lightweight.
 
 Zero unofficial scraper dependencies. No yfinance, no Yahoo unofficial libraries.
 
@@ -224,5 +227,17 @@ Unlike yfinance (a scraper library that bulk-fetches Yahoo endpoints), chrome-cd
 ## Setup Notes
 
 - `packages/` directory does not exist yet — must be created
-- Defuddle should be pinned to a specific version in package.json
+- Defuddle and jsdom should be pinned to specific versions in package.json
 - Bun runtime is already used by the project (baoyu-skills pattern)
+
+## Implementation Phases
+
+### Phase 1 (this PR): `packages/chrome-cdp/` core package
+- `index.ts` — Chrome lifecycle + CDP + Markdown extraction
+- `cache.ts` — file-based daily cache
+- `package.json` — dependencies (defuddle, jsdom)
+- CLI entry point for testing: `bun packages/chrome-cdp/index.ts <url>`
+
+### Phase 2 (follow-up PR): SKILL.md modifications
+- Update Layer 2/3 in affected SKILL.md files (tradfi, crypto, macro, portfolio)
+- `_reference/` directory SKILL.md files are excluded from modification
