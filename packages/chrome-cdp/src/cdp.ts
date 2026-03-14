@@ -150,6 +150,8 @@ export async function evaluateScript<T>(
   return result.result.value as T;
 }
 
+// Note: events are not filtered by sessionId — safe for serial fetch only.
+// If parallel fetch is needed in the future, add sessionId-based event filtering.
 export async function waitForPageLoad(
   cdp: CdpConnection,
   sessionId: string,
