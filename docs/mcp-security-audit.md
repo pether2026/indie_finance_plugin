@@ -50,7 +50,7 @@
 
 ## 非官方 MCP Server（暂不引入）
 
-以下数据源**无官方 MCP server**，均为社区实现。暂通过 Web Search / Chrome CDP fallback 覆盖。
+以下数据源**无官方 MCP server**，均为社区实现。暂通过 Chrome CDP（Layer 2）/ Web Search（Layer 3）fallback 覆盖。
 
 ### DefiLlama
 
@@ -59,7 +59,7 @@
   - `@iqai/defillama-mcp` — v0.0.1，2 stars，12 依赖（含 AI SDK），**风险较高**
   - `@nic0xflamel/defillama-mcp-server` — v0.1.0，0 stars，10 依赖，可用但不成熟
   - dcSpark/mcp-server-defillama — 1 依赖，8 stars，**未发布到 npm**
-- **Fallback 方案**：Web Search defillama.com（API 无限制，网页数据充足）
+- **Fallback 方案**：Chrome CDP `defillama.com/protocol/{protocol}`（Layer 2）；Web Search defillama.com 兜底（Layer 3）
 
 ### FRED (Federal Reserve Economic Data)
 
@@ -67,7 +67,7 @@
 - **社区方案**：
   - `fred-mcp-server` — v1.0.2，66 stars，2 依赖，AGPL-3.0，个人维护（stefanoamorelli）
   - 风险级别：**中低**（依赖少、TypeScript 实现）
-- **Fallback 方案**：Web Search fred.stlouisfed.org（数据完整，页面结构稳定）
+- **Fallback 方案**：Chrome CDP `fred.stlouisfed.org/series/{series_id}`（Layer 2）；Web Search fred.stlouisfed.org 兜底（Layer 3）
 - **备选评估**：如未来需引入，`fred-mcp-server` 是最佳候选（2 依赖，66 stars）
 
 ### Yahoo Finance
@@ -76,7 +76,7 @@
 - **社区方案**：
   - `mcp-yahoo-finance` (PyPI) — v0.1.3，21 stars，2 依赖（mcp + yfinance），MIT，个人维护（maxscheijen）
   - 风险级别：**中**（依赖极简，但需 uvx，早期版本）
-- **Fallback 方案**：Web Search finance.yahoo.com（数据公开，结构化程度高）
+- **Fallback 方案**：Chrome CDP `finance.yahoo.com/quote/{ticker}`（Layer 2）；Web Search finance.yahoo.com 兜底（Layer 3）
 - **备选评估**：如未来需引入，`mcp-yahoo-finance` 是最佳候选（2 依赖，MIT）
 
 ### FMP (Financial Modeling Prep)
@@ -88,10 +88,10 @@
 
 | 子插件 | 启用的 MCP | Fallback 覆盖 |
 |--------|-----------|--------------|
-| tradfi | alpha-vantage | Yahoo Finance, SEC EDGAR via Web Search |
-| crypto | coingecko, dune | DefiLlama via Web Search |
-| macro | coingecko | FRED, DefiLlama via Web Search |
-| portfolio | （无） | Yahoo Finance via Web Search |
+| tradfi | alpha-vantage | Yahoo Finance, SEC EDGAR via Chrome CDP → Web Search |
+| crypto | coingecko, dune | DefiLlama via Chrome CDP → Web Search |
+| macro | coingecko | FRED, DefiLlama via Chrome CDP → Web Search |
+| portfolio | （无） | Yahoo Finance via Chrome CDP → Web Search |
 
 ## 后续行动
 
