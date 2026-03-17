@@ -8,7 +8,11 @@
 
 ### 1. 安装插件
 
-在 Claude Code 中执行：
+最简单的方式：直接告诉 Claude Code：
+
+> 请帮我安装 Ken-zy/indie_finance_plugin 这个插件
+
+Claude 会自动完成后续步骤。也可以手动执行：
 
 ```bash
 # 添加插件市场
