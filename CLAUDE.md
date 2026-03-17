@@ -24,15 +24,28 @@ Layer 1: MCP 数据源（首选）
   → 查询对应的 MCP server
   → 成功则使用，标注 "Source: [MCP名称]"
 
-Layer 2: Web Search（MCP 不可用或数据不足时）
+Layer 2: Chrome CDP 直接访问（MCP 不可用或数据不足时）
+  → URL 已知（见"数据源-场景映射"表）→ 直接导航访问
+  → URL 未知 → 先 Web Search 取 URL，再 Chrome CDP 访问
+    · Web Search 也无法找到 URL → 直接降到 Layer 3
+  → 标注 "Source: Direct Fetch - [URL]"
+
+  【页面过大时的工具降级顺序】
+  Step 1: get_page_text（默认）
+  Step 2: Step 1 报 "Output exceeds character limit" →
+          read_page 获取 DOM 结构，定位数据所在区域的 ref_id，
+          再用 read_page(ref_id=...) 精准读取；
+          若无法找到目标 ref_id 或返回空内容 → 直接 Step 4
+  Step 3: Step 2 成功但目标数据不完整
+          （表格行缺失、财务指标关键行缺失等可观测缺口）→
+          get_page_text(max_chars=200000) 补全；
+          若仍报超限或数据仍不完整 → Step 4
+  Step 4: fallback 回 Layer 3 Web Search 兜底
+
+Layer 3: Web Search 摘要兜底（Chrome CDP 失败时）
   → 使用 WebSearch 工具搜索
   → 优先搜索权威来源（SEC EDGAR, Yahoo Finance, CoinGecko 网页等）
   → 标注 "Source: Web Search - [URL]"
-
-Layer 3: Chrome CDP 直接访问（Web Search 也不可用时）
-  → 通过浏览器直接访问目标 URL
-  → 适用：需要登录的页面、被 bot 检测拦截的站点、动态渲染页面
-  → 标注 "Source: Direct Fetch - [URL]"
 ```
 
 ## 数据源-场景映射
