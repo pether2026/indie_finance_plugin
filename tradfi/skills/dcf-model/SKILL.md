@@ -1171,13 +1171,14 @@ This approach centralizes scenario logic, making the model easier to audit and m
 1. **Gather market data**:
    - Use yahoo-finance MCP for current stock prices, beta, shares outstanding
    - Use financial-modeling-prep MCP for WACC components and analyst estimates
-   - Fall back to web search (finance.yahoo.com, macrotrends.net) if MCP unavailable
+   - Use Chrome CDP (finance.yahoo.com, macrotrends.net) if MCP unavailable
+   - Fall back to web search if Chrome CDP also fails
    - Request from user if specific data is needed
 
 2. **Gather historical financials**:
    - Use yahoo-finance or financial-modeling-prep MCP for structured data
-   - Web search SEC EDGAR for 10-K/10-Q filings as fallback
-   - Use Chrome CDP for pages with bot detection
+   - Use Chrome CDP (sec.gov/cgi-bin/browse-edgar) for 10-K/10-Q filings as fallback
+   - Fall back to web search if Chrome CDP fails
    - Request from user if not available via MCP or web
 
 3. **Begin model construction** using the DCF methodology detailed in this skill

@@ -34,7 +34,7 @@ description: |
 自动拉取可获取的数据：
 - coingecko: 代币信息（如已发币）
 - defillama: TVL、链分布、交易量
-- Web Search: 融资轮次、估值、团队背景、积分机制细节、社区规模、KOL 讨论
+- Chrome CDP: 融资轮次、估值、团队背景、积分机制细节、社区规模、KOL 讨论（URL 未知时先 Web Search 取 URL 再访问，Web Search 无法找到 URL 则直接 Web Search 摘要兜底）
 
 ### Step 3: Pre-Fill Scoring
 基于获取的数据，为每个维度预填评分建议：

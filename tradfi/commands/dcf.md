@@ -39,7 +39,7 @@ Retrieve 3-5 years of historical financials:
 - D&A, CapEx, Changes in Working Capital
 - Tax rate, Net Debt, Shares Outstanding, Current Share Price
 
-Query yahoo-finance MCP first. Fill gaps with financial-modeling-prep and alpha-vantage. Fall back to web search / SEC EDGAR if needed.
+Query yahoo-finance MCP first. Fill gaps with financial-modeling-prep and alpha-vantage. Use Chrome CDP (finance.yahoo.com, sec.gov/edgar) if MCP data is incomplete. Fall back to web search if Chrome CDP also fails.
 
 ### Step 2: Show Inputs — Get Confirmation
 Present the raw data block (revenue, margins, shares, net debt) to the user. Do NOT proceed to projections until user confirms.

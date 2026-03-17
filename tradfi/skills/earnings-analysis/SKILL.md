@@ -145,8 +145,8 @@ The earnings update process follows 5 phases:
 1. Query **yahoo-finance** MCP for latest earnings results and financial statements
 2. Query **alpha-vantage** MCP for earnings call transcripts and earnings calendar
 3. Query **financial-modeling-prep** MCP for detailed estimates and analyst ratings
-4. Fall back to **web search** (Seeking Alpha, Yahoo Finance, SEC EDGAR) if MCP data is incomplete
-5. Use **Chrome CDP** for content behind login walls (e.g., full Seeking Alpha transcripts)
+4. Use **Chrome CDP** for content behind login walls (e.g., full Seeking Alpha transcripts) if MCP data is incomplete
+5. Fall back to **web search** (Seeking Alpha, Yahoo Finance, SEC EDGAR) if Chrome CDP also fails
 
 **REQUIREMENTS:**
 - ✅ Search for latest earnings - do NOT rely on training data

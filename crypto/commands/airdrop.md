@@ -34,7 +34,7 @@ allowed-tools: mcp__coingecko__*, mcp__defillama__*, WebSearch, WebFetch
 ### Step 2: Auto-Fetch Data
 - coingecko: 代币信息（如已发币）
 - defillama: TVL、链分布
-- Web Search: 融资/团队/积分机制/社区规模
+- Chrome CDP: 融资/团队/积分机制/社区规模（URL 未知时先 Web Search 取 URL 再访问）
 
 ### Step 3: Pre-Fill Scoring
 基于数据为六维度预填评分建议（标注为建议，非最终）：
