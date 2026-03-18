@@ -3,7 +3,7 @@
 # 负责的 key: COINGECKO_DEMO_API_KEY
 
 PLUGIN_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-MCP_JSON="$PLUGIN_DIR/.mcp.json"
+CRYPTO_MCP_JSON="$PLUGIN_DIR/../crypto/.mcp.json"
 KEYS_DIR="$HOME/.indie-finance"
 KEYS_FILE="$KEYS_DIR/keys.json"
 
@@ -13,8 +13,13 @@ is_git_tracked() {
   git -C "$(dirname "$file")" ls-files --error-unmatch "$(basename "$file")" >/dev/null 2>&1
 }
 
+# coingecko MCP 由 crypto 插件声明，从 crypto/.mcp.json 读取 key
 read_mcp_key() {
-  MCP_PATH="$MCP_JSON" python3 -c "
+  if [ ! -f "$CRYPTO_MCP_JSON" ]; then
+    echo ""
+    return
+  fi
+  MCP_PATH="$CRYPTO_MCP_JSON" python3 -c "
 import json, os
 try:
     with open(os.environ['MCP_PATH']) as f:
@@ -57,27 +62,13 @@ os.chmod(path, 0o600)
 "
 }
 
+# coingecko MCP 由 crypto 插件声明，写入 crypto/.mcp.json
 write_mcp_key() {
   local key_value="$1"
-  if is_git_tracked "$MCP_JSON"; then
+  if [ ! -f "$CRYPTO_MCP_JSON" ] || is_git_tracked "$CRYPTO_MCP_JSON"; then
     return 0
   fi
-  MCP_PATH="$MCP_JSON" KEY_VALUE="$key_value" python3 -c "
-import json, os
-path = os.environ['MCP_PATH']
-with open(path) as f:
-    data = json.load(f)
-data['mcpServers']['coingecko']['env']['COINGECKO_DEMO_API_KEY'] = os.environ['KEY_VALUE']
-with open(path, 'w') as f:
-    json.dump(data, f, indent=2)
-"
-}
-
-sync_coingecko_to_crypto() {
-  local key_value="$1"
-  local crypto_mcp="$PLUGIN_DIR/../crypto/.mcp.json"
-  if [ -f "$crypto_mcp" ] && ! is_git_tracked "$crypto_mcp"; then
-    TARGET_PATH="$crypto_mcp" KEY_VALUE="$key_value" python3 -c "
+  TARGET_PATH="$CRYPTO_MCP_JSON" KEY_VALUE="$key_value" python3 -c "
 import json, os
 path = os.environ['TARGET_PATH']
 with open(path) as f:
@@ -87,7 +78,6 @@ if 'coingecko' in data.get('mcpServers', {}):
     with open(path, 'w') as f:
         json.dump(data, f, indent=2)
 "
-  fi
 }
 
 # --- 主逻辑 ---
@@ -100,13 +90,15 @@ if [ -n "$MCP_CG" ] && [ -n "$STORED_CG" ]; then
   exit 0
 elif [ -z "$MCP_CG" ] && [ -n "$STORED_CG" ]; then
   # keys.json 有但 mcp 为空 → 恢复
-  if is_git_tracked "$MCP_JSON"; then
-    echo "macro 插件检测到 keys.json 中已有 API key，但当前处于源码仓库中，跳过自动写入 .mcp.json。"
+  if [ ! -f "$CRYPTO_MCP_JSON" ]; then
+    echo "macro 插件检测到 keys.json 中已有 CoinGecko API key，但 crypto 插件的 .mcp.json 不存在，跳过恢复。"
+    echo "请确认 crypto 插件已安装，或手动运行 /setup 配置。"
+  elif is_git_tracked "$CRYPTO_MCP_JSON"; then
+    echo "macro 插件检测到 keys.json 中已有 API key，但当前处于源码仓库中，跳过自动写入 crypto/.mcp.json。"
     echo "请在插件安装后的环境中使用，或手动运行 /setup 配置。"
   else
     write_mcp_key "$STORED_CG"
-    sync_coingecko_to_crypto "$STORED_CG"
-    echo "API key 已从备份恢复到 macro 插件配置。请重启 Claude Code 会话以使 MCP 服务生效。"
+    echo "API key 已从备份恢复到 crypto 插件的 MCP 配置。请重启 Claude Code 会话以使 MCP 服务生效。"
   fi
 elif [ -n "$MCP_CG" ] && [ -z "$STORED_CG" ]; then
   # mcp 有但 keys.json 没有 → 反向备份
@@ -119,7 +111,6 @@ else
   echo ""
   echo "获取用户输入后，执行以下操作："
   echo "1. 将 key 写入 ~/.indie-finance/keys.json（目录权限 700，文件权限 600）"
-  echo "2. 将 key 写入本插件 .mcp.json 的 mcpServers.coingecko.env.COINGECKO_DEMO_API_KEY"
-  echo "3. 同步写入 ../crypto/.mcp.json（如文件存在）"
-  echo "4. 完成后告知用户：已保存，请重启会话。"
+  echo "2. 将 key 写入 ../crypto/.mcp.json 的 mcpServers.coingecko.env.COINGECKO_DEMO_API_KEY（coingecko MCP 由 crypto 插件统一声明）"
+  echo "3. 完成后告知用户：已保存，请重启会话。"
 fi
