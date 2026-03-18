@@ -8,16 +8,16 @@ description: Systematic stock screening and investment idea sourcing. Combines q
 ## Data Source Priority
 
 ### Layer 1: MCP
-1. **yahoo-finance** — Stock screener, key statistics, sector data, insider trading
-2. **financial-modeling-prep** — Financial ratios, screener API, insider data, analyst ratings
+- **alpha-vantage** — 技术指标、行业数据（25次/天限额）
 
-### Layer 2: Web Search
+### Layer 2: Chrome CDP
+- `finance.yahoo.com/quote/{ticker}` — 关键指标、行业数据、内部人交易
+- `tipranks.com/stocks/{ticker}/forecast` — 分析师评级
+
+### Layer 3: Web Search
 - finviz.com for visual screening
 - finance.yahoo.com/screener
 - sec.gov for insider filings
-
-### Layer 3: Chrome CDP
-- For pages requiring login or dynamic rendering
 
 ## Workflow
 

@@ -14,17 +14,16 @@ description: |
 ## Data Source Priority
 
 ### Layer 1: MCP
-- **fred** — 经济数据发布（利率变动、就业数据等）
 - **coingecko** — 加密市场隔夜表现、重大价格变动
-- **defillama** — DeFi TVL 变动、协议重大事件
 
-### Layer 2: Web Search
+### Layer 2: Chrome CDP
+- `fred.stlouisfed.org/series/{series_id}` — 经济数据发布（利率变动、就业数据等）
+- `defillama.com/protocol/{protocol}` — DeFi TVL 变动、协议重大事件
+
+### Layer 3: Web Search
 - 财经新闻（earnings, M&A, 政策变化）
 - 期货/盘前数据
 - 加密新闻（项目公告、监管动态）
-
-### Layer 3: Chrome CDP
-- 需登录的新闻源
 
 ## Workflow
 

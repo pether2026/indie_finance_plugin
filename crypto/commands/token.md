@@ -18,11 +18,11 @@ allowed-tools: mcp__coingecko__*, WebSearch, WebFetch
 ### Layer 1: MCP
 - **coingecko** — 价格/市值/FDV/供给量/交易对/DEX 数据(GeckoTerminal)
 
-### Layer 2: Web Search
-- 解锁时间表、审计报告、项目文档、新闻
+### Layer 2: Chrome CDP
+- 项目官网/文档/审计报告页；需登录的页面
 
-### Layer 3: Chrome CDP
-- 需登录的页面
+### Layer 3: Web Search
+- 解锁时间表、审计报告、项目文档、新闻
 
 Always annotate: "Source: [source name]" on each data point.
 
@@ -42,7 +42,7 @@ Always annotate: "Source: [source name]" on each data point.
 - DEX vs CEX 交易量占比
 
 ### Step 4: Fetch Supplementary Data
-通过 Web Search：
+按三层 Fallback 策略获取（Layer 2: Chrome CDP 访问项目官网/文档/审计报告页，URL 未知时先 Web Search 取 URL 再 CDP；Layer 3: CDP 不可用或数据不足时 Web Search 兜底）：
 - 解锁时间表、审计状态、团队背景、重要新闻
 
 ### Step 5: Compile Report

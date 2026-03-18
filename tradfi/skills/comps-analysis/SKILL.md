@@ -25,17 +25,17 @@ description: |
 
 Follow the three-layer fallback strategy:
 
-### Layer 1: MCP Data Sources (preferred)
-1. **yahoo-finance** — Primary: stock quotes, key statistics, financial statements, company info
-2. **financial-modeling-prep** — Secondary: detailed financials, ratios, enterprise value, peer comparison
-3. **alpha-vantage** — Tertiary: technical indicators only (25次/天 limit)
+### Layer 1: MCP
+- **alpha-vantage** — 技术指标、财报日历（25次/天限额）
 
-### Layer 2: Web Search
+### Layer 2: Chrome CDP
+- `finance.yahoo.com/quote/{ticker}` — 股票行情、财报、关键指标
+- `sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK={ticker}` — SEC Filing
+- `tipranks.com/stocks/{ticker}/forecast` — 分析师预期
+
+### Layer 3: Web Search
 - finance.yahoo.com, macrotrends.net for financial data
 - SEC EDGAR for filings
-
-### Layer 3: Chrome CDP
-- For pages requiring login or dynamic rendering
 
 Always annotate: "Source: [source name]" on each data point.
 
@@ -252,10 +252,10 @@ Same structure as operating section: Max, 75th, Median, 25th, Min for every metr
 ### Required Components
 
 **Data Sources & Quality:**
-- Where did the data come from? (yahoo-finance MCP, financial-modeling-prep MCP, alpha-vantage MCP, SEC filings, web search)
+- Where did the data come from? (alpha-vantage MCP, Chrome CDP finance.yahoo.com, SEC filings, web search)
 - What period does it cover? (Q4 2024, audited figures)
 - How was it verified? (Cross-checked against 10-K/10-Q)
-- Note: Prioritize MCP data sources (yahoo-finance, financial-modeling-prep, alpha-vantage) if available for better accuracy and traceability
+- Note: Follow three-layer fallback: alpha-vantage MCP (Layer 1) → Chrome CDP (Layer 2) → Web Search (Layer 3)
 
 **Key Definitions:**
 - EBITDA calculation method (Gross Profit + D&A, or Operating Income + D&A)
@@ -340,9 +340,9 @@ If you have more than 15 metrics, you're probably including noise. Edit ruthless
 2. **Add cell comments to ALL hard-coded inputs** - Right-click cell -> Insert Comment -> Document source OR assumption
 
    **For sourced data, cite exactly where it came from:**
-   - Example: "yahoo-finance MCP - MSFT key statistics, accessed 2024-10-02"
+   - Example: "alpha-vantage MCP - MSFT technical indicators, accessed 2024-10-02"
    - Example: "Q4 2024 10-K filing, page 42, line item 'Total Revenue'"
-   - Example: "financial-modeling-prep MCP - consensus estimate as of 2024-10-02"
+   - Example: "Chrome CDP finance.yahoo.com - MSFT key statistics, accessed 2024-10-02"
    - **Include hyperlinks when possible**: Right-click cell -> Link -> paste URL to SEC filing, data source, or report
 
    **For assumptions, explain the reasoning:**
@@ -423,7 +423,7 @@ This helps answer: "Is our target company trading rich or cheap vs. peers?"
    - Lock in units and date references
 
 2. **Gather data** (60-90 minutes)
-   - Pull from MCP data sources (yahoo-finance, financial-modeling-prep, alpha-vantage); fall back to SEC EDGAR or web search if needed
+   - Pull from alpha-vantage MCP (Layer 1), Chrome CDP (`finance.yahoo.com`, `sec.gov/edgar`, `tipranks.com`) (Layer 2); fall back to web search if needed (Layer 3)
    - Input all raw numbers in blue
    - Document sources in notes section
 

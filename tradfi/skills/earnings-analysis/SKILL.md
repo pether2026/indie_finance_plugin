@@ -32,18 +32,16 @@ Use when the user requests:
 ## Data Source Priority
 
 ### Layer 1: MCP
-1. **alpha-vantage** — Earnings call transcripts, earnings calendar
-2. **yahoo-finance** — Earnings results, financial statements, analyst estimates
-3. **financial-modeling-prep** — Detailed estimates, historical earnings, analyst ratings
+- **alpha-vantage** — 电话会议转录、财报日历（25次/天限额）
 
-### Layer 2: Web Search
+### Layer 2: Chrome CDP
+- `finance.yahoo.com/quote/{ticker}` — 财报数据、分析师预期
+- `seekingalpha.com/symbol/{ticker}/earnings/transcripts` — 电话会议记录全文
+
+### Layer 3: Web Search
 - seekingalpha.com/earnings/transcripts
 - finance.yahoo.com/earnings
 - sec.gov/cgi-bin/browse-edgar
-
-### Layer 3: Chrome CDP
-- Seeking Alpha (may require login for full transcripts)
-- Earnings call replay pages
 
 ## Critical Requirements
 
@@ -142,11 +140,10 @@ The earnings update process follows 5 phases:
 **COMMON MISTAKE**: Using outdated earnings calls from training data instead of searching for the latest.
 
 **Data Collection Order:**
-1. Query **yahoo-finance** MCP for latest earnings results and financial statements
-2. Query **alpha-vantage** MCP for earnings call transcripts and earnings calendar
-3. Query **financial-modeling-prep** MCP for detailed estimates and analyst ratings
-4. Fall back to **web search** (Seeking Alpha, Yahoo Finance, SEC EDGAR) if MCP data is incomplete
-5. Use **Chrome CDP** for content behind login walls (e.g., full Seeking Alpha transcripts)
+1. Query **alpha-vantage** MCP for earnings call transcripts and earnings calendar (Layer 1)
+2. Use **Chrome CDP** (`finance.yahoo.com/quote/{ticker}`) for earnings results and financial statements (Layer 2)
+3. Use **Chrome CDP** (`seekingalpha.com/symbol/{ticker}/earnings/transcripts`) for full transcripts (Layer 2)
+4. Fall back to **web search** (Seeking Alpha, Yahoo Finance, SEC EDGAR) if Chrome CDP also fails (Layer 3)
 
 **REQUIREMENTS:**
 - ✅ Search for latest earnings - do NOT rely on training data
@@ -244,5 +241,7 @@ Examples of good/bad headlines, tips for success, common mistakes to avoid, and 
 
 **MCP Tools:**
 - alpha-vantage — Earnings transcripts and calendar
-- yahoo-finance — Financial statements and analyst estimates
-- financial-modeling-prep — Detailed estimates and ratings
+
+**Chrome CDP (Layer 2):**
+- `finance.yahoo.com/quote/{ticker}` — Financial statements and analyst estimates
+- `seekingalpha.com/symbol/{ticker}/earnings/transcripts` — Full transcripts

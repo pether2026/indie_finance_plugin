@@ -1,7 +1,7 @@
 ---
 description: Build a discounted cash flow model with WACC, projections, sensitivity analysis — outputs a professional .xlsx file
 argument-hint: <ticker_or_company> [projection_years]
-allowed-tools: Bash(python3:*), Bash(pip:*), mcp__yahoo-finance__*, mcp__financial-modeling-prep__*, mcp__alpha-vantage__*, WebSearch, WebFetch
+allowed-tools: Bash(python3:*), Bash(pip:*), mcp__alpha-vantage__*, WebSearch, WebFetch
 ---
 
 # DCF Model
@@ -15,18 +15,17 @@ Build an institutional-quality DCF valuation model for the target company.
 
 ## Data Source Priority
 
-### Layer 1: MCP Data Sources (preferred)
-1. **yahoo-finance** — financial statements, key statistics, current price, shares outstanding
-2. **financial-modeling-prep** — detailed financials, analyst estimates, enterprise value components
-3. **alpha-vantage** — supplementary fundamentals, earnings data
+### Layer 1: MCP
+- **alpha-vantage** — 技术指标（25次/天限额）
 
-### Layer 2: Web Search
+### Layer 2: Chrome CDP
+- `finance.yahoo.com/quote/{ticker}` — 历史财务数据、现价、股本、资产负债表
+- `sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK={ticker}` — 10-K/10-Q filing
+
+### Layer 3: Web Search
 - SEC EDGAR for 10-K/10-Q filings
 - finance.yahoo.com for consensus estimates
 - macrotrends.net for historical data
-
-### Layer 3: Chrome CDP
-- For pages requiring login or dynamic rendering
 
 Always annotate: "Source: [source name]" on each data point.
 
@@ -39,7 +38,7 @@ Retrieve 3-5 years of historical financials:
 - D&A, CapEx, Changes in Working Capital
 - Tax rate, Net Debt, Shares Outstanding, Current Share Price
 
-Query yahoo-finance MCP first. Fill gaps with financial-modeling-prep and alpha-vantage. Fall back to web search / SEC EDGAR if needed.
+Query alpha-vantage MCP first (Layer 1). Use Chrome CDP (`finance.yahoo.com/quote/{ticker}`, `sec.gov/edgar`) for financial data (Layer 2). Fall back to web search if Chrome CDP also fails (Layer 3).
 
 ### Step 2: Show Inputs — Get Confirmation
 Present the raw data block (revenue, margins, shares, net debt) to the user. Do NOT proceed to projections until user confirms.

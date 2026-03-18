@@ -1,7 +1,7 @@
 ---
 description: Create a professional earnings update report analyzing quarterly results — beat/miss, updated estimates, thesis impact
 argument-hint: <ticker_or_company> [quarter, e.g. Q3 2024]
-allowed-tools: Bash(python3:*), Bash(pip:*), mcp__yahoo-finance__*, mcp__financial-modeling-prep__*, mcp__alpha-vantage__*, WebSearch, WebFetch
+allowed-tools: Bash(python3:*), Bash(pip:*), mcp__alpha-vantage__*, WebSearch, WebFetch
 ---
 
 # Earnings Update
@@ -16,18 +16,16 @@ Create an institutional-quality earnings update report (8-12 pages) for the targ
 ## Data Source Priority
 
 ### Layer 1: MCP
-1. **alpha-vantage** — earnings call transcripts, earnings calendar
-2. **yahoo-finance** — earnings results, financial statements, analyst estimates
-3. **financial-modeling-prep** — detailed estimates, historical earnings, analyst ratings
+- **alpha-vantage** — 电话会议转录、财报日历（25次/天限额）
 
-### Layer 2: Web Search
+### Layer 2: Chrome CDP
+- `finance.yahoo.com/quote/{ticker}` — 财报数据、分析师预期
+- `seekingalpha.com/symbol/{ticker}/earnings/transcripts` — 电话会议记录全文
+
+### Layer 3: Web Search
 - seekingalpha.com for earnings transcripts
 - finance.yahoo.com/earnings
 - sec.gov/cgi-bin/browse-edgar for filings
-
-### Layer 3: Chrome CDP
-- Seeking Alpha (may require login for full transcripts)
-- Earnings call replay pages
 
 ## Critical: Use Latest Data
 
@@ -42,11 +40,10 @@ Do NOT rely on training data for earnings figures. Always fetch live data.
 ## Workflow
 
 ### Phase 1: Data Collection (30-60 min)
-1. Query yahoo-finance MCP for latest earnings results and financial statements
-2. Query alpha-vantage MCP for earnings call transcript and calendar
-3. Query financial-modeling-prep MCP for estimates and analyst ratings
-4. Fall back to web search if MCP data is incomplete
-5. Use Chrome CDP for content behind login walls
+1. Query alpha-vantage MCP for earnings call transcript and calendar (Layer 1)
+2. Use Chrome CDP (`finance.yahoo.com/quote/{ticker}`) for earnings results and financial statements (Layer 2)
+3. Use Chrome CDP (`seekingalpha.com/symbol/{ticker}/earnings/transcripts`) for full transcripts (Layer 2)
+4. Fall back to web search (Seeking Alpha, Yahoo Finance, SEC EDGAR) if Chrome CDP also fails (Layer 3)
 
 ### Phase 2: Beat/Miss Analysis
 For each key metric, calculate:

@@ -1,7 +1,7 @@
 ---
 description: 宏观经济看板 — 利率/通胀/就业/市场情绪/加密宏观/经济日历
 argument-hint: [scope: rates|inflation|jobs|sentiment|crypto-macro|calendar|all]
-allowed-tools: mcp__fred__*, mcp__coingecko__*, mcp__defillama__*, WebSearch, WebFetch
+allowed-tools: mcp__coingecko__*, WebSearch, WebFetch
 ---
 
 # Macro Dashboard
@@ -16,15 +16,14 @@ allowed-tools: mcp__fred__*, mcp__coingecko__*, mcp__defillama__*, WebSearch, We
 ## Data Source Priority
 
 ### Layer 1: MCP
-- **fred** — 利率/国债/CPI/PCE/就业/GDP/美元指数
-- **defillama** — 稳定币总市值/加密 TVL
-- **coingecko** — BTC/ETH/全球加密市值
+- **coingecko** — BTC/ETH 价格/全球加密市值/市场情绪
 
-### Layer 2: Web Search
+### Layer 2: Chrome CDP
+- `fred.stlouisfed.org/series/{series_id}` — 利率/国债/CPI/PCE/就业/GDP/美元指数
+- `defillama.com` — 稳定币总市值/全球加密 TVL/DeFi 总量
+
+### Layer 3: Web Search
 - 经济数据日历、FOMC 声明、VIX、恐惧贪婪指数
-
-### Layer 3: Chrome CDP
-- 需登录的数据源
 
 Always annotate: "Source: [source name]" on each data point.
 
@@ -54,7 +53,7 @@ Always annotate: "Source: [source name]" on each data point.
 
 - [ ] FRED 数据系列 ID 正确
 - [ ] 当前值和前值都已获取
-- [ ] 加密数据来自实时 MCP
+- [ ] 加密数据来自实时数据源（CoinGecko MCP / Chrome CDP）
 - [ ] 日历覆盖未来 2 周重要事件
 - [ ] 降息预期来自实时数据（非猜测）
 - [ ] 数据时效性标注
