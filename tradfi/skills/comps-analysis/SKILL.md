@@ -31,7 +31,9 @@ Follow the three-layer fallback strategy:
 3. **alpha-vantage** — Tertiary: technical indicators only (25次/天 limit)
 
 ### Layer 2: Chrome CDP
-- For pages requiring login or dynamic rendering
+- `finance.yahoo.com/quote/{ticker}` — 股票行情、财报、关键指标
+- `sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK={ticker}` — SEC Filing
+- `tipranks.com/stocks/{ticker}/forecast` — 分析师预期
 
 ### Layer 3: Web Search
 - finance.yahoo.com, macrotrends.net for financial data
