@@ -14,15 +14,21 @@ description: |
 ## Data Source Priority
 
 ### Layer 1: MCP
-- **coingecko** — BTC/ETH 价格/全球加密市值/市场情绪
+- **coingecko MCP** — BTC/ETH 价格/全球加密市值/市场情绪
+
+### Layer 1.5: WebFetch 直调公开 API（MCP 失败时的首选降级）
+- `https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true&include_market_cap=true` — BTC/ETH 实时价格/24h 变化/市值
+- `https://api.coingecko.com/api/v3/global` — 加密总市值/BTC 占比
+- 无需认证，返回实时数据，优于 Web Search（Web Search 返回新闻报道，通常滞后 1-2 天）
 
 ### Layer 2: Chrome CDP
 - `fred.stlouisfed.org/series/{series_id}` — 利率/国债收益率/CPI/PCE/就业数据/GDP/美元指数
-- `defillama.com/protocol/{protocol}` — 稳定币总市值/全球加密 TVL/DeFi 总量
+- `defillama.com` — 稳定币总市值/全球加密 TVL/DeFi 总量/DEX 交易量
 
 ### Layer 3: Web Search
 - 经济数据发布日历、FOMC 声明、市场评论
 - VIX 数据、恐惧贪婪指数
+- ⚠️ **禁止用 Web Search 获取加密价格** — 搜索结果是新闻报道，非实时数据
 
 每个数据点标注 "Source: [source name]"。
 
@@ -68,13 +74,19 @@ description: |
 - 主要股指表现（finance.yahoo.com/quote/%5EGSPC 等）
 
 ### Step 4: Fetch Crypto Macro
-通过 CoinGecko MCP + Chrome CDP（`defillama.com`）获取：
-- BTC 价格 + 7d/30d 变化
-- ETH 价格 + 7d/30d 变化
+**加密价格获取优先级**（按顺序尝试，成功即停）：
+1. CoinGecko MCP（`mcp__plugin_crypto_coingecko__execute`）
+2. WebFetch 调 CoinGecko 公开 API（无需认证，实时数据）
+3. Chrome CDP 访问价格页面
+4. ❌ **不要用 Web Search 查价格**（返回新闻报道，滞后 1-2 天）
+
+获取内容：
+- BTC 价格 + 24h/7d 变化 + 市值
+- ETH 价格 + 24h/7d 变化 + 市值
 - 全球加密总市值
-- 稳定币总市值（DefiLlama）
-- BTC 与纳斯达克相关性（Chrome CDP / Web Search 兜底）
-- DeFi 总 TVL
+- 稳定币总市值（DefiLlama Chrome CDP）
+- DeFi 总 TVL（DefiLlama Chrome CDP）
+- BTC ETF 净流入（DefiLlama / Web Search）
 
 ### Step 5: Compile Dashboard
 

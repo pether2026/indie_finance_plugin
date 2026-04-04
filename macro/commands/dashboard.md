@@ -16,7 +16,12 @@ allowed-tools: mcp__coingecko__*, WebSearch, WebFetch
 ## Data Source Priority
 
 ### Layer 1: MCP
-- **coingecko** — BTC/ETH 价格/全球加密市值/市场情绪
+- **coingecko MCP** — BTC/ETH 价格/全球加密市值/市场情绪
+
+### Layer 1.5: WebFetch 直调公开 API（MCP 失败时的首选降级）
+- `https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true&include_market_cap=true` — 实时价格
+- `https://api.coingecko.com/api/v3/global` — 加密总市值/BTC 占比
+- 无需认证，返回实时数据
 
 ### Layer 2: Chrome CDP
 - `fred.stlouisfed.org/series/{series_id}` — 利率/国债/CPI/PCE/就业/GDP/美元指数
@@ -24,6 +29,7 @@ allowed-tools: mcp__coingecko__*, WebSearch, WebFetch
 
 ### Layer 3: Web Search
 - 经济数据日历、FOMC 声明、VIX、恐惧贪婪指数
+- ⚠️ **禁止用 Web Search 获取加密价格**（返回新闻报道，滞后 1-2 天）
 
 Always annotate: "Source: [source name]" on each data point.
 
